@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mappers.product">
+	<insert id="insert">
+		INSERT INTO product(sportkind, brand, kind,
+		name,
+		number, img, price, buyprice)
+		VALUES(#{sportkind}, #{brand}, #{kind},
+		#{name}, #{number}, #{img}, #{price}, #{buyprice})
+	</insert>
+	<select id="list" resultType="com.ksm.dto.Product">
+		select
+		qseq, sportkind, brand, kind,
+		name, number, img, price
+		from product
+	</select>
+	<select id="detail" resultType="com.ksm.dto.Product">
+		select
+		qseq, sportkind, brand,
+		kind, name, number, img, price
+		from product
+		where qseq= #{qseq}
+	</select>
+	<select id="searchList" resultType="com.ksm.dto.Product">
+		select
+		qseq, sportkind, brand, kind, name, number, img, price
+		from
+		product
+		<choose>
+			<when test='sportkind.equals("all")'>
+				<choose>
+					<when test='brand.equals("all")'>
+						<choose>
+							<when test='kind.equals("all")'>
+							</when>
+							<otherwise>
+								where kind=#{kind}
+							</otherwise>
+						</choose>
+					</when>
+					<otherwise>
+						where brand=#{brand}
+						<choose>
+							<when test='kind.equals("all")'>
+							</when>
+							<otherwise>
+								and kind=#{kind}
+							</otherwise>
+						</choose>
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				where sportkind=#{sportkind}
+				<choose>
+					<when test='brand.equals("all")'>
+						<choose>
+							<when test='kind.equals("all")'>
+							</when>
+							<otherwise>
+								and kind=#{kind}
+							</otherwise>
+						</choose>
+					</when>
+					<otherwise>
+						and brand=#{brand}
+						<choose>
+							<when test='kind.equals("all")'>
+							</when>
+							<otherwise>
+								and kind=#{kind}
+							</otherwise>
+						</choose>
+					</otherwise>
+				</choose>
+			</otherwise>
+		</choose>
+	</select>
+	<update id="subtraction" parameterType="com.ksm.dto.Order">
+	update product
+	set number=number-#{count}
+	where qseq=#{qseq}
+	</update>
+	<update id="addition" parameterType="com.ksm.dto.Order">
+	update product
+	set number=number + #{count}
+	where qseq=#{qseq}
+	</update>
+	
+	<insert id="insertreview" parameterType="com.ksm.dto.Productreview">
+	INSERT INTO productreview(qseq,id,content,img,grade)
+	VALUES(#{qseq},#{id},#{content},#{img},#{grade})
+	</insert>
+	<select id="reviewlist" resultType="com.ksm.dto.Productreview">
+	select *
+	from productreview
+	where qseq=#{qseq}
+	</select>
+	<delete id="deletereview">
+	delete
+	from productreview
+	where seq=#{seq}
+	</delete>
+</mapper>

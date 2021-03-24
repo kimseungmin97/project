@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mappers.sprotproduct">
+	<insert id="insert">
+		INSERT INTO sportproduct(sportkind, brand, kind, name)
+		VALUES(#{sportkind},#{brand},#{kind},#{name})
+	</insert>
+		<select id="searchlist" parameterType="hashMap"
+		resultType="com.ksm.dto.SportProduct">
+		select
+		qseq, sportkind, brand,
+		kind, name
+		from sportproduct
+
+		<if test='selectbox.equals("sportkind")'>
+			WHERE sportkind LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		<if test='selectbox.equals("brand")'>
+			WHERE brand LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		<if test='selectbox.equals("kind")'>
+			WHERE kind LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		<if test='selectbox.equals("name")'>
+			WHERE name LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		order by qseq desc
+	</select>
+	<select id="select"
+		resultType="com.ksm.dto.SportProduct">
+		select
+		qseq, sportkind, brand,
+		kind, name
+		from sportproduct
+		where qseq=#{qseq}
+
+	</select>
+</mapper>

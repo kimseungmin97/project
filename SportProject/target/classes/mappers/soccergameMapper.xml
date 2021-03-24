@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mappers.soccergame">
+	<insert id="insertgame" parameterType="hashMap">
+		INSERT INTO soccergame (home,away,indate)
+		values
+		<foreach collection="list" item="list" separator=" , ">(#{list.home},#{list.away},#{list.indate})</foreach>
+	</insert>
+	<select id="gamelist" parameterType="hashMap" resultType="com.ksm.dto.SoccerGame">
+	SELECT *
+	FROM soccergame
+	WHERE indate
+	BETWEEN #{startdate} and #{enddate}
+	order by indate asc
+	</select>
+	<select id="count" parameterType="hashMap" resultType="int">
+	SELECT count(*)
+	FROM soccergame
+	WHERE indate
+	BETWEEN #{startdate} and #{enddate}
+	</select>
+	<update id="update" parameterType="com.ksm.dto.SoccerGame">
+	update soccergame
+	set point=#{point},
+	losepoint=#{losepoint},
+	result=#{result}
+	where qseq=#{qseq}
+	</update>
+	<update id="updatehometeam" parameterType="com.ksm.dto.SoccerGame">
+	update soccerteam
+	set point=#{point},
+		losepoint=#{losepoint},
+		<if test='result.equals("승")'>
+		win = win + 1,
+		</if>
+		<if test='result.equals("무")'>
+		draw = draw + 1,
+		</if>
+		<if test='result.equals("패")'>
+		lose = lose + 1,
+		</if>
+		points = (win*3) + (draw*1)
+		where team=#{home}
+	</update>
+	<update id="updateawayteam" parameterType="com.ksm.dto.SoccerGame">
+	update soccerteam
+	set point=#{losepoint},
+		losepoint=#{point},
+		<if test='result.equals("패")'>
+		win = win + 1,
+		</if>
+		<if test='result.equals("무")'>
+		draw = draw + 1,
+		</if>
+		<if test='result.equals("승")'>
+		lose = lose + 1,
+		</if>
+		points = (win*3) + (draw*1)
+		where team=#{away}
+	</update>
+	<select id="selectone" resultType="com.ksm.dto.SoccerGame">
+	select *
+	from soccergame
+	where qseq=#{qseq}
+	</select>
+	<select id="teamlist" resultType="com.ksm.dto.Soccerteam">
+	select *
+	from soccerteam
+	order by points desc
+	</select>
+	<select id="aftertoday" resultType="com.ksm.dto.SoccerGame">
+	select *
+	from soccergame
+	where indate 
+	<![CDATA[
+	>=
+	]]>
+	#{today}
+	order by indate asc
+	limit 5
+	</select>
+		<select id="beforetoday" resultType="com.ksm.dto.SoccerGame">
+	select *
+	from soccergame
+	where indate
+	<![CDATA[
+	 <
+	]]>
+	#{today}
+	order by indate desc
+	limit 5
+	</select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mappers.order">
+	<insert id="insert" parameterType="com.ksm.dto.Order">
+		INSERT INTO sport.order (qseq, id, name, phone, address1, address2, allPrice, count)
+		VALUES (#{qseq}, #{id}, #{name}, #{phone}, #{address1}, #{address2}, #{allPrice}, #{count})
+	</insert>
+	<select id="orderlist" resultType="com.ksm.dto.Order">
+	select * from sport.order where id=#{id}
+	</select>
+	<select id="allList" resultType="com.ksm.dto.Order">
+	select * from sport.order
+	</select>
+	<delete id="delete">
+	delete from sport.order
+	where oseq=#{oseq}
+	</delete>
+	<update id="updateresult" parameterType="com.ksm.dto.Order">
+	update sport.order
+	set result=result+1
+	where oseq=#{oseq}
+	</update>
+	<update id="updatereview" parameterType="com.ksm.dto.Order">
+	update sport.order
+	set reviewresult = 1
+	where oseq=#{oseq}
+	</update>
+</mapper>

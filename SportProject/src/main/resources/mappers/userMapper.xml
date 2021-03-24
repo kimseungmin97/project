@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mappers.user">
+<!-- 게시물 목록 -->
+<insert id="insert">
+	INSERT INTO user(id, pw, name, phone, email, address1, address2, birth) 
+					VALUES(#{id}, #{pw}, #{name}, #{phone}, #{email}, #{address1}, #{address2}, #{birth})
+</insert>
+<select id="idcheck" resultType="int">
+	select count(*)
+	from user
+	where id = #{id}
+</select>
+<select id="login" resultType="com.ksm.dto.User">
+ select
+ id, pw, name, phone, email, address1, address2, birth, indate
+ from user
+ where id=#{id}
+ 	AND	pw=#{pw}
+ 	and deletecondition=0
+</select>
+<select id="searchid" resultType="com.ksm.dto.User">
+ select
+ id, pw, name, phone, email, address1, address2, birth, indate, deletecondition
+ from user
+ where name=#{name}
+ 	AND	birth=#{birth}
+ 	AND phone=${phone}
+</select>
+<select id="searchpw" resultType="com.ksm.dto.User">
+ select
+ id, pw, name, phone, email, address1, address2, birth, indate, deletecondition
+ from user
+ where id=#{id}
+ 	AND	name=#{name}
+ 	AND phone=${phone}
+</select>
+<update id="updateuser" parameterType="com.ksm.dto.User">
+	update user set
+            email = #{email},
+            phone = #{phone},
+            address1 = #{address1},
+            address2 = #{address2}
+        where id = #{id}
+</update>
+<update id="deleteuser" parameterType="com.ksm.dto.User">
+	update user set
+           deletecondition ='1'
+        where id = #{id}
+</update>
+<update id="pwupdate" parameterType="hashMap" >
+	update user set
+           pw = #{pw2}
+        where id = #{id}
+</update>
+<select id="select" resultType="com.ksm.dto.User">
+ select
+ id, pw, name, phone, email, address1, address2, birth, indate
+ from user
+ where id=#{id}
+</select>
+</mapper>

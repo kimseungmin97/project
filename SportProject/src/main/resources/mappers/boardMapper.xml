@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.mappers.board">
+	<insert id="insert">
+		INSERT INTO freeboard(qseq, value, subject, content,
+		id)
+		VALUES(#{qseq}, #{value}, #{subject}, #{content}, #{id})
+	</insert>
+	<select id="count" resultType="int">
+		select count(qseq) from freeboard
+	</select>
+	<select id="FreeBoardList" parameterType="hashMap"
+		resultType="com.ksm.dto.FreeBoard">
+		select
+		qseq,value,subject,content,id,view,indate
+		from
+		freeboard
+		order by qseq desc
+		limit #{displayPost}, #{postNum}
+	</select>
+
+	<select id="detail" resultType="com.ksm.dto.FreeBoard">
+		select
+		qseq, value, subject,
+		content, id, view, indate
+		from freeboard
+		where qseq=#{qseq}
+	</select>
+	<update id="viewplus" parameterType="com.ksm.dto.FreeBoard">
+		update freeboard
+		set view=
+		view + 1
+		where qseq= #{qseq}
+	</update>
+	<update id="update" parameterType="com.ksm.dto.FreeBoard">
+		update freeboard
+		set value =
+		#{value}, subject = #{subject}, content = #{content}
+		where qseq=
+		#{qseq}
+	</update>
+	<delete id="delete" parameterType="int">
+		delete
+		from freeboard
+		where
+		qseq=#{qseq}
+	</delete>
+
+	<select id="searchcount"  parameterType="hashMap" resultType="int">
+		<if test='selectbox.equals("value")'>
+			select count(qseq) from freeboard where value like
+			concat('%',
+			#{searchtext}, '%')
+		</if>
+
+		<if test='selectbox.equals("id")'>
+			select count(qseq) from freeboard where id like
+			concat('%', #{searchtext},
+			'%')
+		</if>
+
+		<if test='selectbox.equals("subject")'>
+			select count(qseq) from freeboard where subject like concat('%',
+			#{searchtext}, '%')
+			<!-- or content LIKE concat('%', #{keyword}, '%') -->
+		</if>
+
+		<if test='selectbox.equals("content")'>
+			select count(qseq) from freeboard where content like
+			concat('%',
+			#{searchtext}, '%')
+		</if>
+	</select>
+
+
+	<select id="searchlist" parameterType="hashMap"
+		resultType="com.ksm.dto.FreeBoard">
+		select
+		qseq, value, subject,
+		content, id, view, indate
+		from freeboard
+
+		<if test='selectbox.equals("value")'>
+			WHERE value LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		<if test='selectbox.equals("id")'>
+			WHERE id LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		<if test='selectbox.equals("subject")'>
+			WHERE subject LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		<if test='selectbox.equals("content")'>
+			WHERE content LIKE concat('%', #{searchtext}, '%')
+		</if>
+
+		order by qseq desc
+		limit #{displayPost}, #{postNum}
+	</select>
+	 <!-- 댓글달기 -->
+	<insert id="repinsert">
+		INSERT INTO fbreply(qseq, id, content)
+		VALUES(#{qseq}, #{id}, #{content})
+	</insert>
+	<!-- 댓글목록 -->
+	<select id="replylist" parameterType="com.ksm.dto.Fbreply" resultType="com.ksm.dto.Fbreply">
+		select
+		oseq, qseq, id, content, indate
+		from fbreply
+		where qseq=#{qseq}
+	</select>
+	
+	<select id="popularList" resultType="com.ksm.dto.FreeBoard">
+	select *
+	from freeboard
+	ORDER BY view DESC
+	LIMIT 5;
+	</select>
+</mapper>
